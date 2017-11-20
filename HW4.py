@@ -2,68 +2,91 @@
  Оба поля должны быть типа int. Реализовать методы: сокращение дробей, сравнение, сложение и умножение.'''
 
 
-def get_int(num):
-    if num.isdigit() and (num != '0'):
-        return int(num)
+def get_int(arg):
+    if str(arg)[0] == '-':  # проверка на отрицательное значение нужна, т. к.
+        # isdigit не принимает "минус" за часть числа
+        num = str(arg)[1:]
     else:
-        return get_int(input('Значение введено некорректно. Введите целое число, не равное нулю.'))
+        num = str(arg)
+    if num.isdigit():
+        return int(arg)
+    else:
+        return get_int(input('Значение введено некорректно. Введите целое число.'))
 
 
 def nod(a, b):  # вычисляет НОД
     a = abs(a)
     b = abs(b)
+    if (a == 0) or (b == 0):
+        return a + b
     if a > b:
         a = a % b
     else:
         b = b % a
-    if (a == 0) or (b == 0):
-        return a + b
-    else:
-        return nod(a, b)
+    return nod(a, b)
 
 
 class Fraction:
     def __init__(self, numerator, denominator):
-        self.numerator = numerator
-        self.denominator = denominator
+        self.numerator = get_int(numerator)
+        self.denominator = get_int(denominator)
         self.nod = nod(self.numerator, self.denominator)
 
     # блок сравнений
+    # при ошибке деления на ноль любое сравнение выдаст FALSE
     def __lt__(self, other):
-        if (self.numerator / self.denominator) < (other.numerator / other.denominator):
-            return True
-        else:
+        if (self.denominator == 0) or (other.denominator == 0):
             return False
+        else:
+            if (self.numerator * other.denominator) < (other.numerator * self.denominator):
+                return True
+            else:
+                return False
 
     def __le__(self, other):
-        if (self.numerator / self.denominator) <= (other.numerator / other.denominator):
-            return True
-        else:
+        if (self.denominator == 0) or (other.denominator == 0):
             return False
+        else:
+            if (self.numerator * other.denominator) <= (other.numerator * self.denominator):
+                return True
+            else:
+                return False
 
     def __eq__(self, other):
-        if (self.numerator / self.denominator) == (other.numerator / other.denominator):
-            return True
-        else:
+        if (self.denominator == 0) or (other.denominator == 0):
             return False
+        else:
+            if (self.numerator * other.denominator) == (other.numerator * self.denominator):
+                return True
+            else:
+                return False
 
     def __ne__(self, other):
-        if (self.numerator / self.denominator) != (other.numerator / other.denominator):
-            return True
-        else:
+        if (self.denominator == 0) or (other.denominator == 0):
             return False
+        else:
+            if (self.numerator * other.denominator) != (other.numerator * self.denominator):
+                return True
+            else:
+                return False
 
     def __gt__(self, other):
-        if (self.numerator / self.denominator) > (other.numerator / other.denominator):
-            return True
-        else:
+        if (self.denominator == 0) or (other.denominator == 0):
             return False
+        else:
+            if (self.numerator * other.denominator) > (other.numerator * self.denominator):
+                return True
+            else:
+                return False
 
     def __ge__(self, other):
-        if (self.numerator / self.denominator) >= (other.numerator / other.denominator):
-            return True
-        else:
+        if (self.denominator == 0) or (other.denominator == 0):
             return False
+        else:
+            if (self.numerator * other.denominator) >= (other.numerator * self.denominator):
+                return True
+            else:
+                return False
 
     # блок арифметических операций
     def __add__(self, other):
@@ -87,17 +110,26 @@ class Fraction:
         return Fraction(result_num, result_denom)
 
     def reduce(self):
-        return Fraction(int(self.numerator / self.nod), int(self.denominator / self.nod))
+        if self.nod == 0:
+            return 'Неопределённость! Знаменатель не должен быть равным нулю!'
+        else:
+            return Fraction(int(self.numerator / self.nod), int(self.denominator / self.nod))
 
     # перегружаем вывод
     def __str__(self):
-        return '{}/{}'.format(self.numerator, self.denominator)
+        if self.denominator == 0:
+            return 'Неопределённость! Знаменатель не должен быть равным нулю!'
+        else:
+            return '{}/{}'.format(self.numerator, self.denominator)
 
     def __repr__(self):
-        return '{}/{}'.format(self.numerator, self.denominator)
+        if self.denominator == 0:
+            return 'Неопределённость! Знаменатель не должен быть равным нулю!'
+        else:
+            return '{}/{}'.format(self.numerator, self.denominator)
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # пример работы с классом Fraction
     a = Fraction(get_int(input('Введите числитель: ')),
                  get_int(input('Введите знаменатель: ')))
     b = Fraction(get_int(input('Введите числитель: ')),
